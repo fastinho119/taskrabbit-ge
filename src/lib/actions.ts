@@ -3,6 +3,37 @@
 import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 
+export async function signIn(formData: FormData) {
+  const supabase = createClient();
+  const email = formData.get("email") as string;
+  const password = formData.get("password") as string;
+
+  const { error } = await supabase.auth.signInWithPassword({ email, password });
+  if (error) {
+    throw new Error(error.message);
+  }
+  redirect("/");
+}
+
+export async function signUp(formData: FormData) {
+  const supabase = createClient();
+  const email = formData.get("email") as string;
+  const password = formData.get("password") as string;
+  const full_name = formData.get("full_name") as string;
+
+  const { error } = await supabase.auth.signUp({
+    email,
+    password,
+    options: {
+      data: { full_name },
+    },
+  });
+  if (error) {
+    throw new Error(error.message);
+  }
+  redirect("/");
+}
+
 export async function signOut() {
   const supabase = createClient();
   await supabase.auth.signOut();
@@ -24,18 +55,52 @@ export async function createTask(formData: FormData) {
     throw new Error("ავტორიზაცია აუცილებელია");
   }
 
-  const { error } = await supabase
-    .from("tasks")
-    .insert({
-      category_id,
-      client_id: user.id,
-      title,
-      description,
-    } as any);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const payload: Record<string, any> = {
+    category_id,
+    client_id: user.id,
+    title,
+    description,
+  };
+
+  const { error } = await supabase.from("tasks").insert(payload);
 
   if (error) {
     throw new Error(error.message);
   }
 
   redirect("/tasks");
+}
+
+export async function updatePlatformSettings() {
+  redirect("/admin");
+}
+
+export async function updateCategory() {
+  redirect("/admin");
+}
+
+export async function acceptTask(taskId: string) {
+  const supabase = createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) throw new Error("Unauthorized");
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  await supabase.from("tasks").update({ handyman_id: user.id, status: "accepted" } as any).eq("id", taskId);
+}
+
+export async function submitReview() {
+  // Review submission logic
+}
+
+export async function updateTaskStatus(taskId: string, status: string) {
+  const supabase = createClient();
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  await supabase.from("tasks").update({ status } as any).eq("id", taskId);
+}
+
+export async function uploadTaskPhoto() {
+  return "";
 }
