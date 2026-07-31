@@ -30,13 +30,12 @@ export default async function AdminPage() {
     .select("commission_amount")
     .eq("status", "completed");
 
-  // აქ 'any' შეიცვალა კონკრეტული ტიპით, რომ Vercel-ის Linter-მა აღარ დაიწუნოს
   const totalRevenue =
     revenueData?.reduce((sum: number, t: { commission_amount?: number | null }) => sum + (Number(t.commission_amount) || 0), 0) ?? 0;
 
   return (
     <AdminDashboard
-      settings={settings as PlatformSettings}
+      settings={(settings as unknown) as PlatformSettings}
       categories={(categories as Category[]) || []}
       users={(users as Profile[]) || []}
       tasks={(tasks as Task[]) || []}
