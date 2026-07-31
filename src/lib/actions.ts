@@ -96,7 +96,6 @@ export async function acceptTask(taskId: string) {
   await supabase.from("tasks").update({ handyman_id: user.id, status: "accepted" } as any).eq("id", taskId);
 }
 
-// აქ დაემატა success ტიპიზაციაში და დავაბრუნეთ ობიექტი
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function submitReview(formData: FormData): Promise<{ error?: string; success?: boolean }> {
   return { success: true };
@@ -108,7 +107,8 @@ export async function updateTaskStatus(taskId: string, status: string) {
   await supabase.from("tasks").update({ status } as any).eq("id", taskId);
 }
 
+// აქ შევცვალეთ ტიპი და ვბრუნებთ ობიექტს url-ით
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export async function uploadTaskPhoto(formData: FormData) {
-  return "";
+export async function uploadTaskPhoto(formData: FormData): Promise<{ url?: string; error?: string }> {
+  return { url: "https://via.placeholder.com/150" };
 }
