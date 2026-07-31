@@ -26,7 +26,7 @@ export function Navbar() {
           .select("*")
           .eq("id", user.id)
           .single();
-        setProfile(data as Profile);
+        setProfile((data as unknown) as Profile);
       }
     }
     loadProfile();
