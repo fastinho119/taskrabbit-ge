@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/Button";
 import { signOut } from "@/lib/actions";
-import type { Profile }жие type { Profile } from "@/types";
+import type { Profile } from "@/types";
 import { Menu, X, Wrench } from "lucide-react";
 
 export function Navbar() {
