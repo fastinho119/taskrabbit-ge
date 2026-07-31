@@ -64,8 +64,7 @@ export async function createTask(formData: FormData): Promise<{ error?: string; 
     description,
   };
 
-  // აქ დავამატეთ as any, რომ ტიპების შეჯახება ავიცილოთ თავიდან
-  const { data, error } = await supabase.from("tasks").insert(payload as any).select().single();
+  const { data, error } = await (supabase.from("tasks") as any).insert(payload).select().single();
 
   if (error) {
     return { error: error.message };
@@ -91,8 +90,7 @@ export async function acceptTask(taskId: string) {
   } = await supabase.auth.getUser();
   if (!user) throw new Error("Unauthorized");
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  await supabase.from("tasks").update({ handyman_id: user.id, status: "accepted" } as any).eq("id", taskId);
+  await (supabase.from("tasks") as any).update({ handyman_id: user.id, status: "accepted" }).eq("id", taskId);
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -102,8 +100,7 @@ export async function submitReview(formData: FormData): Promise<{ error?: string
 
 export async function updateTaskStatus(taskId: string, status: string) {
   const supabase = await createClient();
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  await supabase.from("tasks").update({ status } as any).eq("id", taskId);
+  await (supabase.from("tasks") as any).update({ status }).eq("id", taskId);
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
