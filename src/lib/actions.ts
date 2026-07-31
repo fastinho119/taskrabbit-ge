@@ -75,12 +75,14 @@ export async function createTask(formData: FormData) {
   redirect("/tasks");
 }
 
-export async function updatePlatformSettings() {
-  redirect("/admin");
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export async function updatePlatformSettings(formData: FormData): Promise<{ error?: string }> {
+  return {};
 }
 
-export async function updateCategory() {
-  redirect("/admin");
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export async function updateCategory(formData: FormData): Promise<{ error?: string }> {
+  return {};
 }
 
 export async function acceptTask(taskId: string) {
@@ -94,8 +96,9 @@ export async function acceptTask(taskId: string) {
   await supabase.from("tasks").update({ handyman_id: user.id, status: "accepted" } as any).eq("id", taskId);
 }
 
-export async function submitReview() {
-  // Review submission logic
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export async function submitReview(formData: FormData): Promise<{ error?: string }> {
+  return {};
 }
 
 export async function updateTaskStatus(taskId: string, status: string) {
@@ -104,6 +107,7 @@ export async function updateTaskStatus(taskId: string, status: string) {
   await supabase.from("tasks").update({ status } as any).eq("id", taskId);
 }
 
-export async function uploadTaskPhoto() {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export async function uploadTaskPhoto(formData: FormData) {
   return "";
 }
