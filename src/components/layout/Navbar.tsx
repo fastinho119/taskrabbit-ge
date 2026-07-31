@@ -15,7 +15,7 @@ export async function Navbar() {
       .select('*')
       .eq('id', user.id)
       .single();
-    profile = data as Profile;
+    profile = data as unknown as Profile;
   }
 
   return (
