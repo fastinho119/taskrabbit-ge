@@ -43,7 +43,7 @@ export async function signOut() {
   redirect("/auth/login");
 }
 
-export async function createTask(formData: FormData) {
+export async function createTask(formData: FormData): Promise<{ error?: string } | void> {
   const supabase = createClient();
 
   const title = formData.get("title") as string;
@@ -55,7 +55,7 @@ export async function createTask(formData: FormData) {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    throw new Error("ავტორიზაცია აუცილებელია");
+    return { error: "ავტორიზაცია აუცილებელია" };
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -69,7 +69,7 @@ export async function createTask(formData: FormData) {
   const { error } = await supabase.from("tasks").insert(payload);
 
   if (error) {
-    throw new Error(error.message);
+    return { error: error.message };
   }
 
   redirect("/tasks");
@@ -107,7 +107,6 @@ export async function updateTaskStatus(taskId: string, status: string) {
   await supabase.from("tasks").update({ status } as any).eq("id", taskId);
 }
 
-// აქ შევცვალეთ ტიპი და ვბრუნებთ ობიექტს url-ით
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export async function uploadTaskPhoto(formData: FormData): Promise<{ url?: string; error?: string }> {
   return { url: "https://via.placeholder.com/150" };
