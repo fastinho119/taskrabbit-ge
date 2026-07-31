@@ -17,7 +17,6 @@ export default function TaskWizard() {
 
     const formData = new FormData(e.currentTarget);
 
-    // ფოტოს ატვირთვის ლოგიკა (თუ არსებობს)
     const photoInput = e.currentTarget.querySelector('input[type="file"]') as HTMLInputElement;
     if (photoInput && photoInput.files && photoInput.files[0]) {
       const photoFormData = new FormData();
@@ -35,6 +34,7 @@ export default function TaskWizard() {
       setError(result.error);
       setLoading(false);
     } else {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const taskData = (result as any)?.data as { id?: string } | undefined;
       if (taskData?.id) {
         router.push(`/tasks/${taskData.id}`);
