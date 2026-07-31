@@ -84,7 +84,10 @@ export function TaskWizard({ categories }: TaskWizardProps) {
       setError(result.error);
       setLoading(false);
     } else {
-      router.push(`/tasks/${result.data?.id}`);
+      const taskData = result.data as { id?: string } | undefined;
+      if (taskData?.id) {
+        router.push(`/tasks/${taskData.id}`);
+      }
     }
   }
 
