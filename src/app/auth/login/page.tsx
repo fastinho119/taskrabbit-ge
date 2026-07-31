@@ -1,99 +1,82 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { signIn } from "@/lib/actions";
-import { createClient } from "@/lib/supabase/client";
-import { Button } from "@/components/ui/Button";
-import { Input } from "@/components/ui/Input";
-import { Card, CardHeader, CardTitle } from "@/components/ui/Card";
-import type { Profile } from "@/types";
+import Link from "next/link";
 
 export default function LoginPage() {
-  const router = useRouter();
-  const [error, setError] = useState("");
+  const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
-    setError("");
+    setError(null);
 
     const formData = new FormData(e.currentTarget);
-    const result = await signIn(formData);
+    // ტიპების 100%-იანი დაზღვევა:
+    const result = (await signIn(formData)) as { error?: string };
 
-    if (result.error) {
+    if (result?.error) {
       setError(result.error);
       setLoading(false);
       return;
     }
-
-    const supabase = createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (user) {
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("role")
-        .eq("id", user.id)
-        .single();
-
-      const role = (profile as Pick<Profile, "role"> | null)?.role;
-      if (role === "handyman") router.push("/handyman");
-      else if (role === "admin") router.push("/admin");
-      else router.push("/dashboard");
-    } else {
-      router.push("/dashboard");
-    }
-
-    router.refresh();
-  }
+  };
 
   return (
-    <div className="flex min-h-[calc(100vh-8rem)] items-center justify-center px-4 py-12">
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle>შესვლა</CardTitle>
-          <p className="text-sm text-gray-600 mt-1">TaskRabbit GE-ში შესვლა</p>
-        </CardHeader>
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <Input
-            id="email"
-            name="email"
-            type="email"
-            label="ელ-ფოსტა"
-            placeholder="example@mail.com"
-            required
-          />
-          <Input
-            id="password"
-            name="password"
-            type="password"
-            label="პაროლი"
-            placeholder="••••••••"
-            required
-          />
-
+    <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4 py-12 sm:px-6 lg:px-8">
+      <div className="w-full max-w-md space-y-8 bg-white p-8 shadow-md rounded-lg">
+        <div>
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+            სისტემაში შესვლა
+          </h2>
+        </div>
+        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           {error && (
-            <div className="rounded-lg bg-red-50 p-3 text-sm text-red-700">{error}</div>
+            <div className="rounded-md bg-red-50 p-4 text-sm text-red-700">
+              {error}
+            </div>
           )}
+          <div className="space-y-4">
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-gray-700">ელ-ფოსტა</label>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                required
+                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
+              />
+            </div>
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700">პაროლი</label>
+              <input
+                id="password"
+                name="password"
+                type="password"
+                required
+                className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-blue-500 sm:text-sm"
+              />
+            </div>
+          </div>
 
-          <Button type="submit" className="w-full" loading={loading}>
-            შესვლა
-          </Button>
+          <div>
+            <button
+              type="submit"
+              disabled={loading}
+              className="flex w-full justify-center rounded-md border border-transparent bg-blue-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
+            >
+              {loading ? "დაელოდეთ..." : "შესვლა"}
+            </button>
+          </div>
         </form>
-
-        <p className="mt-4 text-center text-sm text-gray-600">
-          არ გაქვთ ანგარიში?{" "}
-          <Link href="/auth/register" className="text-primary-600 hover:underline">
-            რეგისტრაცია
+        <div className="text-center text-sm mt-4">
+          <Link href="/auth/register" className="font-medium text-blue-600 hover:text-blue-500">
+            არ გაქვთ ანგარიში? გაიარეთ რეგისტრაცია
           </Link>
-        </p>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 }
