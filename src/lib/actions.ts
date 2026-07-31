@@ -64,7 +64,8 @@ export async function createTask(formData: FormData): Promise<{ error?: string; 
     description,
   };
 
-  const { data, error } = await supabase.from("tasks").insert(payload).select().single();
+  // აქ დავამატეთ as any, რომ ტიპების შეჯახება ავიცილოთ თავიდან
+  const { data, error } = await supabase.from("tasks").insert(payload as any).select().single();
 
   if (error) {
     return { error: error.message };
