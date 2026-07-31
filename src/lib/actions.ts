@@ -21,16 +21,14 @@ export async function signUp(formData: FormData): Promise<{ error: string } | vo
   const password = formData.get("password") as string;
   const full_name = formData.get("full_name") as string;
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const credentials: Record<string, any> = {
+  const { error } = await supabase.auth.signUp({
     email,
     password,
     options: {
       data: { full_name },
     },
-  };
+  });
 
-  const { error } = await supabase.auth.signUp(credentials);
   if (error) {
     return { error: error.message };
   }
