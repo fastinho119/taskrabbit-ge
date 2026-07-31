@@ -1,43 +1,29 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
-import { createClient } from "@/lib/supabase/client";
+import { Menu, X, Wrench } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { signOut } from "@/lib/actions";
 import type { Profile } from "@/types";
-import { Menu, X, Wrench } from "lucide-react";
+import type { User } from "@supabase/supabase-js";
 
-export function Navbar() {
+interface NavbarClientProps {
+  user: User | null;
+  profile: Profile | null;
+}
+
+export function NavbarClient({ user, profile }: NavbarClientProps) {
   const pathname = usePathname();
-  const [profile, setProfile] = useState<Profile | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
-  const supabase = createClient();
-
-  useEffect(() => {
-    async function loadProfile() {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (user) {
-        const { data } = await supabase
-          .from("profiles")
-          .select("*")
-          .eq("id", user.id)
-          .single();
-        if (data) {
-          setProfile(data as Profile);
-        }
-      }
-    }
-    loadProfile();
-  }, [supabase]);
 
   const navLinks = [
     { href: "/tasks", label: "დავალებები" },
     { href: "/handyman", label: "ხელოსნები" },
-    ...(profile?.role === "admin" ? [{ href: "/admin", label: "ადმინისტრაცია" }] : []),
+    ...(profile?.role === "admin"
+      ? [{ href: "/admin", label: "ადმინისტრაცია" }]
+      : []),
   ];
 
   return (
@@ -69,9 +55,11 @@ export function Navbar() {
 
           {/* Desktop Auth Actions */}
           <div className="hidden md:flex items-center gap-3">
-            {profile ? (
+            {user ? (
               <>
-                <span className="text-sm text-gray-600">{profile.full_name}</span>
+                <span className="text-sm text-gray-600">
+                  {profile?.full_name || user.email}
+                </span>
                 <form action={signOut}>
                   <Button type="submit" variant="ghost" size="sm">
                     გასვლა
@@ -81,7 +69,9 @@ export function Navbar() {
             ) : (
               <>
                 <Link href="/auth/login">
-                  <Button variant="ghost" size="sm">შესვლა</Button>
+                  <Button variant="ghost" size="sm">
+                    შესვლა
+                  </Button>
                 </Link>
                 <Link href="/auth/register">
                   <Button size="sm">რეგისტრაცია</Button>
@@ -120,25 +110,38 @@ export function Navbar() {
           ))}
 
           <div className="border-t border-gray-100 pt-3 mt-3">
-            {profile ? (
+            {user ? (
               <div className="space-y-2">
                 <div className="text-sm font-medium text-gray-700 px-2">
-                  {profile.full_name}
+                  {profile?.full_name || user.email}
                 </div>
                 <form action={signOut}>
-                  <Button type="submit" variant="outline" size="sm" className="w-full justify-start text-red-600">
+                  <Button
+                    type="submit"
+                    variant="outline"
+                    size="sm"
+                    className="w-full justify-start text-red-600"
+                  >
                     გასვლა
                   </Button>
                 </form>
               </div>
             ) : (
               <div className="flex gap-2">
-                <Link href="/auth/login" className="flex-1" onClick={() => setMobileOpen(false)}>
+                <Link
+                  href="/auth/login"
+                  className="flex-1"
+                  onClick={() => setMobileOpen(false)}
+                >
                   <Button variant="outline" size="sm" className="w-full">
                     შესვლა
                   </Button>
                 </Link>
-                <Link href="/auth/register" className="flex-1" onClick={() => setMobileOpen(false)}>
+                <Link
+                  href="/auth/register"
+                  className="flex-1"
+                  onClick={() => setMobileOpen(false)}
+                >
                   <Button size="sm" className="w-full">
                     რეგისტრაცია
                   </Button>
