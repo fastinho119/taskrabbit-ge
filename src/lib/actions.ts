@@ -10,7 +10,7 @@ export async function signIn(formData: FormData) {
 
   const { error } = await supabase.auth.signInWithPassword({ email, password });
   if (error) {
-    throw new Error(error.message);
+    return { error: error.message };
   }
   redirect("/");
 }
@@ -32,7 +32,7 @@ export async function signUp(formData: FormData) {
 
   const { error } = await supabase.auth.signUp(credentials);
   if (error) {
-    throw new Error(error.message);
+    return { error: error.message };
   }
   redirect("/");
 }
