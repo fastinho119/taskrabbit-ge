@@ -30,8 +30,9 @@ export default async function AdminPage() {
     .select("commission_amount")
     .eq("status", "completed");
 
+  // აქ დაემატა :number და :any, რათა Vercel-მა ერორი აღარ ამოაგდოს
   const totalRevenue =
-    revenueData?.reduce((sum, t) => sum + (t.commission_amount || 0), 0) ?? 0;
+    revenueData?.reduce((sum: number, t: any) => sum + (Number(t.commission_amount) || 0), 0) ?? 0;
 
   return (
     <AdminDashboard
