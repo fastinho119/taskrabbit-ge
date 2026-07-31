@@ -35,13 +35,12 @@ export async function Navbar() {
         </div>
 
         <div className="flex items-center space-x-4">
-          {profile ? (
+          {user ? (
             <>
-              <span className="text-sm text-gray-600">{profile.full_name}</span>
-              <form action={async () => {
-                'use server';
-                await signOut();
-              }}>
+              <span className="text-sm text-gray-600">
+                {profile?.full_name || user.email}
+              </span>
+              <form action={signOut}>
                 <Button type="submit" variant="ghost" size="sm">
                   გასვლა
                 </Button>

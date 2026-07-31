@@ -2,6 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server';
 import { revalidatePath } from 'next/cache';
+import { redirect } from 'next/navigation';
 import { calculatePriceEstimate } from '@/config/pricing';
 import type { ComplexityLevel } from '@/config/pricing';
 import type { Category } from '@/types';
@@ -18,7 +19,7 @@ export async function signIn(formData: FormData) {
     return { error: error.message };
   }
   revalidatePath('/');
-  return { success: true };
+  redirect('/');
 }
 
 export async function signUp(formData: FormData) {
@@ -39,14 +40,14 @@ export async function signUp(formData: FormData) {
     return { error: error.message };
   }
   revalidatePath('/');
-  return { success: true };
+  redirect('/');
 }
 
 export async function signOut() {
   const supabase = await createClient();
   await supabase.auth.signOut();
   revalidatePath('/');
-  return { success: true };
+  redirect('/');
 }
 
 // ==================== PHOTO & TASK ACTIONS ====================
