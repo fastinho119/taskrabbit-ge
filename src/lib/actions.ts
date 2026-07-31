@@ -43,7 +43,7 @@ export async function signOut() {
   redirect("/auth/login");
 }
 
-export async function createTask(formData: FormData): Promise<{ error?: string } | void> {
+export async function createTask(formData: FormData): Promise<{ error?: string }> {
   const supabase = createClient();
 
   const title = formData.get("title") as string;
@@ -72,7 +72,7 @@ export async function createTask(formData: FormData): Promise<{ error?: string }
     return { error: error.message };
   }
 
-  redirect("/tasks");
+  return {};
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
