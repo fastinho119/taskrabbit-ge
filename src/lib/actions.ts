@@ -4,7 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 
 export async function signIn(formData: FormData): Promise<{ error: string } | void> {
-  const supabase = createClient();
+  const supabase = await createClient();
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
 
@@ -16,7 +16,7 @@ export async function signIn(formData: FormData): Promise<{ error: string } | vo
 }
 
 export async function signUp(formData: FormData): Promise<{ error: string } | void> {
-  const supabase = createClient();
+  const supabase = await createClient();
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
   const full_name = formData.get("full_name") as string;
@@ -38,13 +38,13 @@ export async function signUp(formData: FormData): Promise<{ error: string } | vo
 }
 
 export async function signOut() {
-  const supabase = createClient();
+  const supabase = await createClient();
   await supabase.auth.signOut();
   redirect("/auth/login");
 }
 
-export async function createTask(formData: FormData): Promise<{ error?: string }> {
-  const supabase = createClient();
+export async function createTask(formData: FormData): Promise<{ error?: string; data?: any }> {
+  const supabase = await createClient();
 
   const title = formData.get("title") as string;
   const description = formData.get("description") as string;
@@ -66,13 +66,13 @@ export async function createTask(formData: FormData): Promise<{ error?: string }
     description,
   };
 
-  const { error } = await supabase.from("tasks").insert(payload);
+  const { data, error } = await supabase.from("tasks").insert(payload).select().single();
 
   if (error) {
     return { error: error.message };
   }
 
-  return {};
+  return { data };
 }
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -86,7 +86,7 @@ export async function updateCategory(formData: FormData): Promise<{ error?: stri
 }
 
 export async function acceptTask(taskId: string) {
-  const supabase = createClient();
+  const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -102,7 +102,7 @@ export async function submitReview(formData: FormData): Promise<{ error?: string
 }
 
 export async function updateTaskStatus(taskId: string, status: string) {
-  const supabase = createClient();
+  const supabase = await createClient();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   await supabase.from("tasks").update({ status } as any).eq("id", taskId);
 }
