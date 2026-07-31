@@ -35,7 +35,7 @@ export function TaskWizard({ categories }: TaskWizardProps) {
   const [complexity, setComplexity] = useState<ComplexityLevel>("simple");
   const [estimatedHours, setEstimatedHours] = useState(1);
 
-  const selectedCategory = categories.find((c) => c.id === categoryId);
+  const selectedCategory = categories.find((c) => c.id === categoryId) as Category | undefined;
 
   const estimate = selectedCategory
     ? calculatePriceEstimate({
@@ -96,7 +96,7 @@ export function TaskWizard({ categories }: TaskWizardProps) {
       case 0:
         return !!categoryId;
       case 1:
-        return true; // photo optional
+        return true;
       case 2:
         return title.length >= 3 && description.length >= 10;
       case 3:
